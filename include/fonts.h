@@ -15,5 +15,9 @@ extern const u16 gFontNarrowLatinGlyphs[];
 extern const u8 gFontNarrowLatinGlyphWidths[];
 extern const u16 gFontSmallNarrowLatinGlyphs[];
 extern const u8 gFontSmallNarrowLatinGlyphWidths[];
+extern const u16 gFontNormalChineseGlyphs[];
+extern const u8 gFontNormalChineseGlyphWidths[];
+extern const u16 gFontSmallChineseGlyphs[];
+extern const u8 gFontSmallChineseGlyphWidths[];
 
 #endif // GUARD_FONTS_H

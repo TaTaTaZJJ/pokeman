@@ -290,3 +290,31 @@ ALIGNED(4) const u8 gFontShortJapaneseGlyphWidths[] = {
     10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
     10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
 };
+
+ALIGNED(4) const u16 gFontSmallChineseGlyphs[] = INCBIN_U16("graphics/fonts/small_chinese.latfont");
+ALIGNED(4) const u8 gFontSmallChineseGlyphWidths[] = {
+    // 汉字小字体统一宽度为10，这里只有标点符号的宽度
+	3,        //；
+    8,        //。
+    12,       //—
+    12,       //~
+    7,        //、
+    7,        //，
+    9,        //！
+    11,       //？
+    6,        //：
+};
+
+ALIGNED(4) const u16 gFontNormalChineseGlyphs[] = INCBIN_U16("graphics/fonts/normal_chinese.latfont");
+ALIGNED(4) const u8 gFontNormalChineseGlyphWidths[] = {
+    // 汉字大字体统一宽度为12，这里只有标点符号的宽度
+    3,    //；
+    4,    //。
+    11,   //—
+    11,   //~
+    7,    //、
+    7,    //，
+    8,    //！
+    10,   //？
+    6,    //：
+};

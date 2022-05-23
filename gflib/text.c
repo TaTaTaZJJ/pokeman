@@ -1117,6 +1117,119 @@ static u16 RenderText(struct TextPrinter *textPrinter)
             gCurGlyph.width = DrawKeypadIcon(textPrinter->printerTemplate.windowId, currChar, textPrinter->printerTemplate.currentX, textPrinter->printerTemplate.currentY);
             textPrinter->printerTemplate.currentX += gCurGlyph.width + textPrinter->printerTemplate.letterSpacing;
             return RENDER_PRINT;
+        //判断首字节是否为汉字专用控制符，并重写成新的编码
+        case 0x01:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1000;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x02:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1100;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x03:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1200;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x04:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1300;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x05:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1400;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x07:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1500;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x08:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1600;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x09:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1700;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0A:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1800;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0B:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1900;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0C:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1A00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0D:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1B00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0E:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1C00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x0F:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1D00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x10:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1E00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x11:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x1F00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x12:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2000;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x13:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2100;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x14:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2200;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x15:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2300;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x16:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2400;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x17:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2500;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x18:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2600;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x19:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2700;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x1A:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2800;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x1C:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2900;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x1D:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2A00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
+        case 0x1E:
+            currChar = *textPrinter->printerTemplate.currentChar | 0x2B00;
+            textPrinter->printerTemplate.currentChar++;
+            break;
         case EOS:
             return RENDER_FINISH;
         }
@@ -1696,8 +1809,16 @@ static void DecompressGlyph_Small(u16 glyphId, bool32 isJapanese)
     }
     else
     {
-        glyphs = gFontSmallLatinGlyphs + (0x20 * glyphId);
-        gCurGlyph.width = gFontSmallLatinGlyphWidths[glyphId];
+        if (glyphId >= 0x1000) //汉字字符判定
+        {
+            glyphs = gFontSmallChineseGlyphs + (0x20 * (glyphId - 0x1000));
+            gCurGlyph.width = (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 10;
+        }
+        else
+        {
+            glyphs = gFontSmallLatinGlyphs + (0x20 * glyphId);
+            gCurGlyph.width = gFontSmallLatinGlyphWidths[glyphId];
+        }
 
         if (gCurGlyph.width <= 8)
         {
@@ -1720,6 +1841,8 @@ static u32 GetGlyphWidth_Small(u16 glyphId, bool32 isJapanese)
 {
     if (isJapanese == TRUE)
         return 8;
+    else if (glyphId >= 0x1000) //汉字字符判定
+        return (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 12;
     else
         return gFontSmallLatinGlyphWidths[glyphId];
 }
@@ -1738,8 +1861,16 @@ static void DecompressGlyph_Narrow(u16 glyphId, bool32 isJapanese)
     }
     else
     {
-        glyphs = gFontNarrowLatinGlyphs + (0x20 * glyphId);
-        gCurGlyph.width = gFontNarrowLatinGlyphWidths[glyphId];
+        if (glyphId >= 0x1000) //汉字字符判定
+        {
+            glyphs = gFontNormalChineseGlyphs + (0x20 * (glyphId - 0x1000));
+            gCurGlyph.width = (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontNormalChineseGlyphWidths[glyphId - 0x2B5E] : 13;
+        }
+        else
+        {
+            glyphs = gFontNarrowLatinGlyphs + (0x20 * glyphId);
+            gCurGlyph.width = gFontNarrowLatinGlyphWidths[glyphId];
+        }
 
         if (gCurGlyph.width <= 8)
         {
@@ -1762,6 +1893,8 @@ static u32 GetGlyphWidth_Narrow(u16 glyphId, bool32 isJapanese)
 {
     if (isJapanese == TRUE)
         return 8;
+    else if (glyphId >= 0x1000) //汉字字符判定
+        return (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontNormalChineseGlyphWidths[glyphId - 0x2B5E] : 12;
     else
         return gFontNarrowLatinGlyphWidths[glyphId];
 }
@@ -1780,9 +1913,17 @@ static void DecompressGlyph_SmallNarrow(u16 glyphId, bool32 isJapanese)
     }
     else
     {
-        glyphs = gFontSmallNarrowLatinGlyphs + (0x20 * glyphId);
-        gCurGlyph.width = gFontSmallNarrowLatinGlyphWidths[glyphId];
-
+        if (glyphId >= 0x1000) //汉字字符判定
+        {
+            glyphs = gFontSmallChineseGlyphs + (0x20 * (glyphId - 0x1000));
+            gCurGlyph.width = (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 10;
+        }
+        else
+        {
+            glyphs = gFontSmallNarrowLatinGlyphs + (0x20 * glyphId);
+            gCurGlyph.width = gFontSmallNarrowLatinGlyphWidths[glyphId];
+        }
+        
         if (gCurGlyph.width <= 8)
         {
             DecompressGlyphTile(glyphs, gCurGlyph.gfxBufferTop);
@@ -1804,6 +1945,8 @@ static u32 GetGlyphWidth_SmallNarrow(u16 glyphId, bool32 isJapanese)
 {
     if (isJapanese == TRUE)
         return 8;
+    else if (glyphId >= 0x1000) //汉字字符判定
+        return (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 12;
     else
         return gFontSmallNarrowLatinGlyphWidths[glyphId];
 }
@@ -1824,8 +1967,16 @@ static void DecompressGlyph_Short(u16 glyphId, bool32 isJapanese)
     }
     else
     {
-        glyphs = gFontShortLatinGlyphs + (0x20 * glyphId);
-        gCurGlyph.width = gFontShortLatinGlyphWidths[glyphId];
+        if (glyphId >= 0x1000) //汉字字符判定
+        {
+            glyphs = gFontSmallChineseGlyphs + (0x20 * (glyphId - 0x1000));
+            gCurGlyph.width = (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 10;
+        }
+        else
+        {
+            glyphs = gFontShortLatinGlyphs + (0x20 * glyphId);
+            gCurGlyph.width = gFontShortLatinGlyphWidths[glyphId];
+        }
 
         if (gCurGlyph.width <= 8)
         {
@@ -1848,6 +1999,8 @@ static u32 GetGlyphWidth_Short(u16 glyphId, bool32 isJapanese)
 {
     if (isJapanese == TRUE)
         return gFontShortJapaneseGlyphWidths[glyphId];
+    else if (glyphId >= 0x1000) //汉字字符判定
+        return (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontSmallChineseGlyphWidths[glyphId - 0x2B5E] : 12;
     else
         return gFontShortLatinGlyphWidths[glyphId];
 }
@@ -1866,8 +2019,16 @@ static void DecompressGlyph_Normal(u16 glyphId, bool32 isJapanese)
     }
     else
     {
-        glyphs = gFontNormalLatinGlyphs + (0x20 * glyphId);
-        gCurGlyph.width = gFontNormalLatinGlyphWidths[glyphId];
+        if (glyphId >= 0x1000) //汉字字符判定
+        {
+            glyphs = gFontNormalChineseGlyphs + (0x20 * (glyphId - 0x1000));
+            gCurGlyph.width = (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontNormalChineseGlyphWidths[glyphId - 0x2B5E] : 13;
+        }
+        else
+        {
+            glyphs = gFontNormalLatinGlyphs + (0x20 * glyphId);
+            gCurGlyph.width = gFontNormalLatinGlyphWidths[glyphId];
+        }
 
         if (gCurGlyph.width <= 8)
         {
@@ -1890,6 +2051,8 @@ static u32 GetGlyphWidth_Normal(u16 glyphId, bool32 isJapanese)
 {
     if (isJapanese == TRUE)
         return 8;
+    else if (glyphId >= 0x1000) //汉字字符判定
+        return (glyphId >= 0x2B5E && glyphId <= 0x2B66) ? gFontNormalChineseGlyphWidths[glyphId - 0x2B5E] : 12;
     else
         return gFontNormalLatinGlyphWidths[glyphId];
 }
